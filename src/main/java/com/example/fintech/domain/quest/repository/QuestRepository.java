@@ -1,4 +1,7 @@
 package com.example.fintech.domain.quest.repository;
 
-public interface QuestRepository {
+import com.example.fintech.domain.quest.entity.Quest;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface QuestRepository extends JpaRepository<Quest, Long> {
 }
