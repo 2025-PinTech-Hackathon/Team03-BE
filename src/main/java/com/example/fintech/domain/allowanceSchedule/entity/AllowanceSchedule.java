@@ -1,6 +1,7 @@
 package com.example.fintech.domain.allowanceSchedule.entity;
 
 import com.example.fintech.domain.account.entity.Account;
+import com.example.fintech.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AllowanceSchedule {
+public class AllowanceSchedule extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

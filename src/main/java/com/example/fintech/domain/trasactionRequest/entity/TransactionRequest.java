@@ -2,6 +2,7 @@ package com.example.fintech.domain.trasactionRequest.entity;
 
 import com.example.fintech.domain.spendingConstraint.entity.SpendingConstraint;
 import com.example.fintech.domain.user.entity.User;
+import com.example.fintech.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionRequest {
+public class TransactionRequest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
