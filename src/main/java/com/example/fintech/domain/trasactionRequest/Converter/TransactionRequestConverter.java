@@ -35,7 +35,7 @@ public class TransactionRequestConverter {
     }
 
     public TransactionReqResponseDTO toResponseDTO(TransactionRequest entity) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
 
         return TransactionReqResponseDTO.builder()
                 .reason(entity.getReason())
@@ -43,12 +43,6 @@ public class TransactionRequestConverter {
                 .amount(entity.getAmount())
                 .timestamp(entity.getTimestamp().format(formatter))
                 .build();
-//        TransactionReqResponseDTO dto = new TransactionReqResponseDTO();
-//        dto.setReason(entity.getReason());
-//        dto.setMerchantName(entity.getMerchantName());
-//        dto.setAmount(entity.getAmount());
-//        dto.setTimestamp(entity.getTimestamp());
-//        return dto;
     }
 
 

@@ -14,6 +14,6 @@ public class TransactionReqResponseDTO {
     private String reason;
     private String merchantName;
     private int amount;
-    private LocalDate timestamp;
+    private String timestamp;
 
 }
