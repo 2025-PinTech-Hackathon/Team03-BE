@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -36,7 +37,7 @@ public class Quest extends BaseEntity {
     private int reward;
 
     @Column(nullable = false)
-    private LocalDate deadline;
+    private LocalDateTime deadline;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

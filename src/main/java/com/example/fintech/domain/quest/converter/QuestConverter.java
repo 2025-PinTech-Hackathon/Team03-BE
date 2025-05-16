@@ -1,6 +1,7 @@
 package com.example.fintech.domain.quest.converter;
 
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
+import com.example.fintech.domain.quest.dto.response.QuestListResponseDTO;
 import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
 import com.example.fintech.domain.quest.entity.Category;
 import com.example.fintech.domain.quest.entity.Quest;
@@ -8,7 +9,8 @@ import com.example.fintech.domain.user.entity.User;
 import com.example.fintech.domain.quest.entity.Status;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class QuestConverter {
@@ -19,7 +21,7 @@ public class QuestConverter {
                 .title(dto.getTitle())
                 .body(dto.getBody())
                 .reward(Integer.parseInt(dto.getReward()))
-                .deadline(LocalDate.parse(dto.getDeadline().substring(0, 10)))
+                .deadline(dto.getDeadline())
                 .status(Status.CHALLENGING)
                 .user(user)
                 .build();
@@ -31,6 +33,19 @@ public class QuestConverter {
                 .title(quest.getTitle())
                 .childId(childId)
                 .reward(quest.getReward())
+                .build();
+    }
+
+    public QuestListResponseDTO toResponse(Quest quest) {
+        return QuestListResponseDTO.builder()
+                .questId(Long.valueOf(String.valueOf(quest.getId())))
+                .category(quest.getCategory().toString())
+                .title(quest.getTitle())
+                .body(quest.getBody())
+                .reward(quest.getReward())
+                .createdAt(quest.getCreatedAt())
+                .deadline(quest.getDeadline())
+                .status(quest.getStatus().toString())
                 .build();
     }
 }
