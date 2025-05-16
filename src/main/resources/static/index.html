@@ -50,6 +50,15 @@
             document.getElementById("status").innerText = "⚠️ 연결 실패";
             console.error("연결 오류:", err.message);
         });
+
+        socket.on("transaction-blocked", (data) => {
+            console.log("❌ 거래 차단 알림 수신:", data);
+
+            // 예: alert 또는 화면에 표시
+            const li = document.createElement("li");
+            li.innerText = `❌ 거래 차단: ${data.reason} (${data.amount}원 / ${data.merchantName})`;
+            document.getElementById("messages").appendChild(li);
+        });
     }
 </script>
 </body>

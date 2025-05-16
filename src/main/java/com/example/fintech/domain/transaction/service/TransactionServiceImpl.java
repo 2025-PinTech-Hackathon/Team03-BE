@@ -1,5 +1,6 @@
 package com.example.fintech.domain.transaction.service;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.example.fintech.domain.account.entity.Account;
 import com.example.fintech.domain.account.repository.AccountRepository;
 import com.example.fintech.domain.merchantCategory.entity.MerchantCategory;
@@ -35,6 +36,7 @@ public class TransactionServiceImpl implements TransactionService{
     private final AccountRepository accountRepository;
     private final MerchantCategoryRepository categoryRepository;
     private final TransactionConverter transactionConverter;
+    private final SocketIOServer socketIOServer;
 
 
     // 결제 시도
@@ -140,8 +142,16 @@ public class TransactionServiceImpl implements TransactionService{
 
         // 요청 mccCode가 제한된 코드에 있으면 예외 발생
         if (blockedMccCodes.contains(mccCode)) {
-            TransactionResponse.failureCategoryDTO failureDTO = transactionConverter.toFailureCategoryDTO(request, "업종 제한");
-            throw new TransactionException(TransactionErrorCode.CATEGORY_LIMIT,failureDTO);
+            TransactionResponse.failureCategoryDTO failureDTO =
+                    transactionConverter.toFailureCategoryDTO(request, "업종 제한");
+
+            String childId = userId.toString();
+
+            socketIOServer.getRoomOperations(childId).getClients().stream()
+                    .filter(client -> "PARENT".equals(client.get("role")))
+                    .forEach(client -> client.sendEvent("transaction-blocked", failureDTO));
+
+            throw new TransactionException(TransactionErrorCode.CATEGORY_LIMIT, failureDTO);
         }
 
         return true;
