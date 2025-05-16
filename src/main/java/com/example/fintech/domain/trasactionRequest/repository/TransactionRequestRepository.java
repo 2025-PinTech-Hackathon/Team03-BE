@@ -10,13 +10,15 @@ import java.util.Optional;
 
 public interface TransactionRequestRepository extends JpaRepository<TransactionRequest, Long> {
 
-    @Query("SELECT tr.status FROM TransactionRequest tr " +
-            "WHERE tr.user.id = :userId AND tr.amount = :amount AND tr.merchantName = :merchantName " +
+    @Query("SELECT tr FROM TransactionRequest tr " +
+            "WHERE tr.user.id = :userId AND tr.amount = :amount AND tr.merchantName = :merchantName AND tr.status = 'APPROVE' " +
             "ORDER BY tr.createdAt DESC")
-    Optional<Status> findApprovedRequest(
+    Optional<TransactionRequest> findLatestApprovedRequest(
             @Param("userId") Long userId,
             @Param("amount") int amount,
-            @Param("merchantName") String merchantName
-    );
+            @Param("merchantName") String merchantName);
 
+
+    Optional<TransactionRequest> findTopByUserIdAndAmountAndMerchantNameAndStatusOrderByCreatedAtDesc(
+            Long userId, int amount, String merchantName, Status status);
 }

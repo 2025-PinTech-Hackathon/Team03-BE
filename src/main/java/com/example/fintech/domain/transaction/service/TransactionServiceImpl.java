@@ -14,8 +14,8 @@ import com.example.fintech.domain.transaction.exception.TransactionErrorCode;
 import com.example.fintech.domain.transaction.exception.TransactionException;
 import com.example.fintech.domain.transaction.repository.TransactionRepository;
 import com.example.fintech.domain.trasactionRequest.entity.Status;
+import com.example.fintech.domain.trasactionRequest.entity.TransactionRequest;
 import com.example.fintech.domain.trasactionRequest.repository.TransactionRequestRepository;
-import com.example.fintech.global.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,9 +50,17 @@ public class TransactionServiceImpl implements TransactionService{
                 .map(MerchantCategory::getId)
                 .orElse(null);
 
+        // transaction request 검사
+        boolean approved = checkTransRequest(request);
+
         // constraint 검사
-        checkConstraint(request);
-        // transaction request 검사 -> 통과
+        if (approved) {
+            // 승인된 경우 PAID로 바꾸고 결제 처리
+            updatePaid(request.getUserId(), request.getAmount(), request.getMerchantName());
+        } else{
+            // 승인 안 된 경우에만 제약조건 검사
+            checkConstraint(request);
+        }
 
         // 결제 성공
         Transaction transaction = transactionConverter.toEntity(request, account, categoryId);
@@ -66,7 +74,6 @@ public class TransactionServiceImpl implements TransactionService{
 
         Long userId = request.getUserId();
         int amount = request.getAmount();
-        String merchantName = request.getMerchantName();
         int mccCode = request.getMccCode();
         LocalDateTime timestamp = request.getTimestamp();
 
@@ -76,6 +83,7 @@ public class TransactionServiceImpl implements TransactionService{
         checkCategoryLimit(userId, mccCode);
     }
 
+    // time limit 검증
     @Override
     public boolean checkTimeLimit(Long userId, LocalDateTime timestamp) {
         Optional<SpendingConstraint> optionalConstraint = constraintRepository.findByUserId(userId);
@@ -136,12 +144,35 @@ public class TransactionServiceImpl implements TransactionService{
 
     // transaction request 검증
     @Override
-    public Status checkTransRequest(Long userId, int amount, String merchantName) {
+    public boolean checkTransRequest(TransactionRequestDTO request) {
 
-        Status status = transRequestRepository
-                .findApprovedRequest(userId, amount, merchantName)
-                .orElse(null);  // 없으면 null 반환
+        Long userId = request.getUserId();
+        int amount = request.getAmount();
+        String merchantName = request.getMerchantName();
 
-        return status;
+        return transRequestRepository.findLatestApprovedRequest(userId, amount, merchantName)
+                .isPresent();
     }
+
+    @Transactional
+    public void updatePaid(Long userId, int amount, String merchantName) {
+        Optional<TransactionRequest> optionalRequest = transRequestRepository
+                .findTopByUserIdAndAmountAndMerchantNameAndStatusOrderByCreatedAtDesc(
+                        userId,
+                        amount,
+                        merchantName,
+                        Status.APPROVE
+                );
+
+        if (optionalRequest.isEmpty()) {
+            throw new TransactionException(TransactionErrorCode.REQUEST_NOT_APPROVED);
+        }
+
+        TransactionRequest transactionRequest = optionalRequest.get();
+        transactionRequest.setStatus(Status.PAID);
+        transRequestRepository.save(transactionRequest);
+    }
+
+
+
 }

@@ -12,7 +12,7 @@ public interface TransactionService {
     void creatTransaction(TransactionRequestDTO request);
 
     // 승인된 결제인지 검증
-    Status checkTransRequest(Long userId, int amount, String merchantName);
+    boolean checkTransRequest(TransactionRequestDTO request);
 
     // 제한된 소비인지 검증
     void checkConstraint(TransactionRequestDTO request);
