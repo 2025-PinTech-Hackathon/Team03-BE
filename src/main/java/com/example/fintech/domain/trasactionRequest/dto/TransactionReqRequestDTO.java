@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class TransactionRequestDTO {
+public class TransactionReqRequestDTO {
     private String reason;
     private String merchantName;
     private int mccCode;

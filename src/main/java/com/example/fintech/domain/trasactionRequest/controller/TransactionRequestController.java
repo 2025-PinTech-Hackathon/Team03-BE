@@ -1,8 +1,10 @@
 package com.example.fintech.domain.trasactionRequest.controller;
 
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.example.fintech.domain.trasactionRequest.Converter.TransactionRequestConverter;
-import com.example.fintech.domain.trasactionRequest.dto.TransactionRequestDTO;
+import com.example.fintech.domain.trasactionRequest.dto.TransactionReqRequestDTO;
+import com.example.fintech.domain.trasactionRequest.dto.TransactionReqResponseDTO;
 import com.example.fintech.domain.trasactionRequest.entity.TransactionRequest;
 import com.example.fintech.domain.trasactionRequest.service.TransactionRequestService;
 import com.example.fintech.global.ApiResponse;
@@ -16,14 +18,25 @@ public class TransactionRequestController {
 
     private final TransactionRequestConverter transactionRequestConverter;
     private final TransactionRequestService transactionRequestService;
+    private final SocketIOServer socketIOServer;
 
     @PostMapping("/attempt")
     public ApiResponse<Void> requestTransaction (
             @RequestHeader("Authorization") String token,
-            @RequestBody TransactionRequestDTO transactionRequestDTO
+            @RequestBody TransactionReqRequestDTO transactionReqRequestDTO
     ){
-        TransactionRequest entity = transactionRequestConverter.toEntity(transactionRequestDTO, token);
+        TransactionRequest entity = transactionRequestConverter.toEntity(transactionReqRequestDTO, token);
         transactionRequestService.saveTransaction(entity);
+
+        String childId = entity.getUser().getId().toString();
+
+        TransactionReqResponseDTO responseDTO = transactionRequestConverter.toResponseDTO(entity);
+
+
+        socketIOServer.getRoomOperations(childId).getClients().stream()
+                .filter(client -> "PARENT".equals(client.get("role")))
+                .forEach(client -> client.sendEvent("ask-approval", responseDTO));
+
         return ApiResponse.onSuccess(null);
     }
 }
