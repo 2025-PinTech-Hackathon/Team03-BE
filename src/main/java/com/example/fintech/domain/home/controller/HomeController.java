@@ -19,9 +19,9 @@ public class HomeController {
     private final HomeService homeService;
 
     @GetMapping("/ai-comment")
-    public ApiResponse<AiCommentResponseDTO> getAiComment(@RequestHeader("Authorization") String token) {
+    public ApiResponse<String> getAiComment(@RequestHeader("Authorization") String token) {
         AiCommentResponseDTO responseDTO = homeService.getAiComment(token);
-        return ApiResponse.onSuccess(responseDTO);
+        return ApiResponse.onSuccess(responseDTO.getSummary());
     }
 
     // 홈 정보 조회
