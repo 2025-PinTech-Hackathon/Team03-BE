@@ -19,4 +19,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay
     );
+
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+            "WHERE t.account.id = :accountId " +
+            "AND t.amount < 0 " +
+            "AND t.timestamp BETWEEN :startOfDay AND :endOfDay")
+    int sumTodayExpenses(
+            @Param("accountId") Long accountId,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay
+    );
+
+
 }

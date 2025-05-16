@@ -2,11 +2,19 @@ package com.example.fintech.domain.home.service;
 
 import com.example.fintech.domain.account.entity.Account;
 import com.example.fintech.domain.account.repository.AccountRepository;
+import com.example.fintech.domain.home.converter.HomeConverter;
 import com.example.fintech.domain.home.dto.request.AiRequestDTO;
 import com.example.fintech.domain.home.dto.request.AiTransactionDTO;
 import com.example.fintech.domain.home.dto.response.AiCommentResponseDTO;
+import com.example.fintech.domain.home.dto.response.HomeResponseDTO;
 import com.example.fintech.domain.home.exception.HomeErrorCode;
 import com.example.fintech.domain.home.exception.HomeException;
+import com.example.fintech.domain.quest.entity.Status;
+import com.example.fintech.domain.quest.repository.QuestRepository;
+import com.example.fintech.domain.spendingConstraint.entity.SpendingConstraint;
+import com.example.fintech.domain.spendingConstraint.exception.SpendingConstraintErrorCode;
+import com.example.fintech.domain.spendingConstraint.exception.SpendingConstraintException;
+import com.example.fintech.domain.spendingConstraint.repository.SpendingConstraintRepository;
 import com.example.fintech.domain.transaction.entity.Transaction;
 import com.example.fintech.domain.transaction.repository.TransactionRepository;
 import com.example.fintech.domain.user.entity.User;
@@ -34,8 +42,11 @@ public class HomeServiceImpl implements HomeService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final QuestRepository questRepository;
+    private final SpendingConstraintRepository constraintRepository;
     private final CustomJwtUtil jwtUtil;
     private final RestTemplate restTemplate;
+    private final HomeConverter homeConverter;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -109,5 +120,64 @@ public class HomeServiceImpl implements HomeService {
             e.printStackTrace();
             throw new HomeException(HomeErrorCode.AI_REQUEST_FAIL);
         }
+    }
+
+    // 홈 정보 조회
+    @Override
+    public HomeResponseDTO getHomeInfo(String token) {
+
+        Long userId = jwtUtil.getUserId(token);
+        String role = jwtUtil.getRole(token);
+
+        User child;
+        if ("PARENT".equals(role)) {
+            User parent = userRepository.findById(userId)
+                    .orElseThrow(() -> new HomeException(HomeErrorCode.USER_NOT_FOUND));
+
+            child = parent.getChildren().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new HomeException(HomeErrorCode.CHILD_NOT_FOUND));
+
+        }else{
+            child = userRepository.findById(userId)
+                    .orElseThrow(() -> new HomeException(HomeErrorCode.CHILD_NOT_FOUND));
+        }
+
+        // 1. 진행 중인 쿼스트 개수 조회
+        long inProgressCount = questRepository.countByUserIdAndStatus(child.getId(), Status.CHALLENGING);
+
+        // 2. 계좌 잔액 조회
+        double leftMoney = accountRepository.findByUserId(child.getId())
+                .map(Account::getBalance)
+                .orElse(0.0);
+
+        // 3. 오늘의 남은 금액 조회
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+        SpendingConstraint constraint = constraintRepository.findByUserId(child.getId())
+                .orElseThrow(() -> new SpendingConstraintException(SpendingConstraintErrorCode.CONSTRAINT_NOT_FOUND));
+
+        Long accountId = accountRepository.findByUserId(child.getId())
+                .orElseThrow(() -> new HomeException(HomeErrorCode.ACCOUNT_NOT_FOUND))
+                .getId();
+
+        int dailyLimit = constraint.getDailyLimit();
+
+        System.out.println("dailyLimit = " + dailyLimit);
+        System.out.println("today = " + today);
+        System.out.println("startOfDay = " + startOfDay);
+        System.out.println("endOfDay = " + endOfDay);
+
+        int spent = transactionRepository.sumTodayExpenses(accountId, startOfDay, endOfDay);
+        System.out.println("spent = " + spent);
+        int todayRemain = Math.max(0, dailyLimit - Math.abs(spent));
+
+        return homeConverter.toResponse(
+                inProgressCount,
+                leftMoney,
+                todayRemain
+        );
     }
 }
