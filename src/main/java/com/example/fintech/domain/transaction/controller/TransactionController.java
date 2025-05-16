@@ -22,4 +22,14 @@ public class TransactionController {
         transactionService.creatTransaction(request);
         return ApiResponse.onSuccess("거래 성공");
     }
+
+    // 소비 내역 조회
+    @PostMapping("/report")
+    public BaseResponse<MonthlyReportResponseDTO> getMonthlyReport(
+            @RequestHeader("Authorization") String token,
+            @RequestBody MonthlyReportRequestDTO request
+    ) {
+        MonthlyReportResponseDTO result = reportService.generateMonthlyReport(token, request);
+        return BaseResponse.success(result);
+    }
 }
