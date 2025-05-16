@@ -47,4 +47,16 @@ public class QuestServiceImpl implements QuestService {
 
         return questConverter.toResponse(quest, childId);
     }
+
+    @Override
+    public void deleteQuest(Long questId, String token) {
+        Long userId = CustomJwtUtil.getUserId(token);
+
+        Quest quest = questRepository.findById(questId)
+                .orElseThrow(() -> new QuestException(QuestErrorCode.QUEST_NOT_FOUND));
+
+        questRepository.delete(quest);
+    }
+
+
 }

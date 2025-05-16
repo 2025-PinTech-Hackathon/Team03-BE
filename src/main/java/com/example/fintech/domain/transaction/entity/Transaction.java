@@ -1,6 +1,7 @@
 package com.example.fintech.domain.transaction.entity;
 
 import com.example.fintech.domain.account.entity.Account;
+import com.example.fintech.domain.merchantCategory.entity.MerchantCategory;
 import com.example.fintech.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,5 +37,9 @@ public class Transaction extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    @OneToOne
+    @JoinColumn(name = "category_id")
+    private MerchantCategory merchantCategory;
 
 }

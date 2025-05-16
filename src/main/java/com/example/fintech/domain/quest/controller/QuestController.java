@@ -36,4 +36,14 @@ public class QuestController {
 
         return ApiResponse.onSuccess(response);
     }
+
+    // 퀘스트 삭제
+    @DeleteMapping("/{questId}/delete")
+    public ApiResponse<Void> deleteQuest(
+            @PathVariable Long questId,
+            @RequestHeader("Authorization") String token
+    ) {
+        questService.deleteQuest(questId, token);
+        return ApiResponse.onSuccess(null);
+    }
 }
