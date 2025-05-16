@@ -26,20 +26,16 @@ public class Transaction extends BaseEntity {
     private String merchantName;
 
     @Column(nullable = false)
-    private String mccCode;
-
-    @Column(nullable = false)
     private int amount;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(nullable = false, name = "category_id")
+    private Long categoryId;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
-
-    @OneToOne
-    @JoinColumn(name = "category_id")
-    private MerchantCategory merchantCategory;
 
 }
