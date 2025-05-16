@@ -34,6 +34,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(reasonDTO.getHttpStatus()).body(ApiResponse.onFailure(reasonDTO.getCode(), reasonDTO.getMessage(), message));
     }
 
+    @ExceptionHandler(GeneralException.class)
+    public ResponseEntity<ApiResponse<Object>> generalException(GeneralException e) {
+        BaseErrorCode code = e.getBaseErrorCode();
+        ErrorReasonDTO dto = code.getReasonHttpStatus();
+
+        log.error("Exception Advice(General Exception): {}", dto.getMessage());
+
+        return ResponseEntity
+                .status(dto.getHttpStatus())
+                .body(ApiResponse.onFailure(dto.getCode(), dto.getMessage(), e.getResult()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> error = new HashMap<>();
@@ -44,15 +56,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(dto.getHttpStatus()).body(ApiResponse.onFailure(dto.getCode(), dto.getMessage(), error));
     }
 
-    @ExceptionHandler(GeneralException.class)
-    public ResponseEntity<ApiResponse<String>> generalException(GeneralException e) {
-        BaseErrorCode code = e.getBaseErrorCode();
-        ErrorReasonDTO dto = code.getReasonHttpStatus();
-
-        log.error("Exception Advice(General Exception): {}", dto.getMessage());
-
-        return ResponseEntity.status(dto.getHttpStatus()).body(ApiResponse.onFailure(dto.getCode(), dto.getMessage(), null));
-    }
+//    @ExceptionHandler(GeneralException.class)
+//    public ResponseEntity<ApiResponse<String>> generalException(GeneralException e) {
+//        BaseErrorCode code = e.getBaseErrorCode();
+//        ErrorReasonDTO dto = code.getReasonHttpStatus();
+//
+//        log.error("Exception Advice(General Exception): {}", dto.getMessage());
+//
+//        return ResponseEntity.status(dto.getHttpStatus()).body(ApiResponse.onFailure(dto.getCode(), dto.getMessage(), null));
+//    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> exception(Exception e) {
