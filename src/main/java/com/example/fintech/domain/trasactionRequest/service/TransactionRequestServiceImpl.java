@@ -52,9 +52,9 @@ public class TransactionRequestServiceImpl implements TransactionRequestService 
                 .orElseThrow(() -> new TransactionException(TransactionErrorCode.USER_NOT_FOUND))
                 .getChild().getId();
 
-        // 2. 자식 ID + timestamp 일치하는 거래 찾기
+        // 2. 자식 ID로 가장 최근 생성된 거래 찾기 (createdAt 기준)
         TransactionRequest entity = transactionRequestRepository
-                .findByUserIdAndTimestamp(childId, dto.getTimestamp())
+                .findFirstByUserIdOrderByCreatedAtDesc(childId)
                 .orElseThrow(() -> new TransactionRequestException(TransactionRequestErrorCode.TRANSACTION_NOT_FOUND));
 
         // 3. status 업데이트

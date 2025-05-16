@@ -22,5 +22,5 @@ public interface TransactionRequestRepository extends JpaRepository<TransactionR
 
     Optional<TransactionRequest> findTopByUserIdAndAmountAndMerchantNameAndStatusOrderByCreatedAtDesc(
             Long userId, int amount, String merchantName, Status status);
-    Optional<TransactionRequest> findByUserIdAndTimestamp(Long userId, LocalDateTime timestamp);
+    Optional<TransactionRequest> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
 }
