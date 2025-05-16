@@ -8,4 +8,6 @@ import lombok.Getter;
 public class QuestResponseDTO {
     private Long questId;
     private String title;
+    private Long childId;
+    private Integer reward;
 }
