@@ -20,12 +20,18 @@ public class SpendingConstraint extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Type type;
+    private String amountLimit;
 
-    @Column(nullable = false)
-    private String value;
+    private String dailyLimit;
+
+    @Column(columnDefinition = "json")
+    private String category;
+
+    @Column(columnDefinition = "json")
+    private String timeLimit;
+
+    @Column(columnDefinition = "json")
+    private String location;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
