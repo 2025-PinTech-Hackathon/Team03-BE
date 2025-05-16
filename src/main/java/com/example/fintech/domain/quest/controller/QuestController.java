@@ -1,10 +1,10 @@
 package com.example.fintech.domain.quest.controller;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
 import com.example.fintech.domain.quest.service.QuestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
 import com.example.fintech.global.ApiResponse;
@@ -15,7 +15,7 @@ import com.example.fintech.global.ApiResponse;
 public class QuestController {
 
     private final QuestService questService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final SocketIOServer socketIOServer;
     // 퀘스트 생성
     @PostMapping("/create")
     public ApiResponse<QuestResponseDTO> createQuest(
@@ -24,15 +24,13 @@ public class QuestController {
     ) {
         QuestResponseDTO response = questService.createQuest(authHeader, request);
 
+        // 🧩 자녀 ID = 퀘스트 수신 대상
+        String childId = response.getChildId().toString(); // 혹은 childId 추출
 
+        // 🧩 소켓으로 퀘스트 push
+        socketIOServer.getRoomOperations(childId)
+                .sendEvent("quest", response);
 
-        messagingTemplate.convertAndSend(
-                "/topic/child/" + response.getChildId(),
-                response
-        );
-
-        System.out.println("[WebSocket] 메시지 전송 경로: /topic/child/" + response.getChildId());
-        System.out.println("[WebSocket] 메시지 내용: " + response); // toString 확인
 
         return ApiResponse.onSuccess(response);
     }

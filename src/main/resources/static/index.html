@@ -1,34 +1,56 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>WebSocket 연결 확인</title>
+    <meta charset="UTF-8" />
+    <title>Socket.IO 퀘스트 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@2.3.0/dist/socket.io.js"></script>
+
 </head>
 <body>
 <h2>🔌 WebSocket 연결 상태: <span id="status">연결 안 됨</span></h2>
+
+<label>🔐 JWT 토큰: <input id="tokenInput" size="80" /></label><br />
+<button onclick="connect()">Socket.IO 연결</button>
+
 <ul id="messages"></ul>
 
-<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script>
-    const socket = new SockJS("/ws");
-    const stomp = Stomp.over(socket);
+    let socket;
 
-    const childId = "2"; // 실제 자녀 ID로 바꾸세요
+    function connect() {
+        const token = document.getElementById("tokenInput").value;
 
-    stomp.connect({}, () => {
-        document.getElementById("status").innerText = "WebSocket 연결 성공!";
+        if (!token) {
+            alert("JWT 토큰을 입력하세요.");
+            return;
+        }
 
-        // 퀘스트 메시지 구독
-        stomp.subscribe(`/topic/child/${childId}`, (message) => {
-            const data = JSON.parse(message.body);
+        socket = io("http://localhost:9092", {
+            query: { token: token },
+            transports: ["websocket"]
+        });
+
+        socket.on("connect", () => {
+            document.getElementById("status").innerText = "✅ 연결됨";
+            console.log("🔌 연결 성공:", socket.id);
+        });
+
+        socket.on("quest", (data) => {
             const li = document.createElement("li");
-            li.innerText = `퀘스트 도착: ${data.title} (보상: ${data.reward}원)`;
+            li.innerText = `📥 퀘스트 도착: ${data.title} (보상: ${data.reward}원)`;
             document.getElementById("messages").appendChild(li);
         });
-    }, () => {
-        document.getElementById("status").innerText = "연결 실패";
-    });
+
+        socket.on("disconnect", () => {
+            document.getElementById("status").innerText = "❌ 연결 끊김";
+            console.log("🔌 연결 종료");
+        });
+
+        socket.on("connect_error", (err) => {
+            document.getElementById("status").innerText = "⚠️ 연결 실패";
+            console.error("연결 오류:", err.message);
+        });
+    }
 </script>
 </body>
 </html>
