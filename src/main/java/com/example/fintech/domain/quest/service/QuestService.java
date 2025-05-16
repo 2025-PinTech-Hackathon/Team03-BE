@@ -5,4 +5,5 @@ import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
 
 public interface QuestService {
     QuestResponseDTO createQuest(String token, QuestRequestDTO request);
+    void deleteQuest(Long questId, String token);
 }
