@@ -1,13 +1,12 @@
 package com.example.fintech.domain.home.exception;
 
+import com.example.fintech.global.code.BaseErrorCode;
+import com.example.fintech.global.exception.GeneralException;
 import lombok.Getter;
 
 @Getter
-public class HomeException extends RuntimeException {
-    private final HomeErrorCode errorCode;
-
-    public HomeException(HomeErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
+public class HomeException extends GeneralException {
+    public HomeException(BaseErrorCode baseErrorCode) {
+        super(baseErrorCode);
     }
 }
