@@ -60,6 +60,7 @@ public class SocketIoConfig {
                     // 3️⃣ 클라이언트에 유저 정보 저장 + 방 입장
                     client.set("userId", userId);
                     client.set("roomId", roomId);
+                    client.set("role", role);
                     client.joinRoom(roomId);
 
                     System.out.println("✅ 유저 " + userId + " → 방 " + roomId + " 입장 완료");
