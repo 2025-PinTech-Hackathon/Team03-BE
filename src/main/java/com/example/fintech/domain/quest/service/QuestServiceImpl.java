@@ -2,7 +2,6 @@ package com.example.fintech.domain.quest.service;
 
 import com.example.fintech.domain.account.entity.Account;
 import com.example.fintech.domain.account.repository.AccountRepository;
-import com.example.fintech.domain.merchantCategory.entity.MerchantCategory;
 import com.example.fintech.domain.merchantCategory.repository.MerchantCategoryRepository;
 import com.example.fintech.domain.parentChild.repository.ParentChildRepository;
 import com.example.fintech.domain.quest.converter.QuestConverter;
@@ -37,7 +36,6 @@ public class QuestServiceImpl implements QuestService {
     private final ParentChildRepository parentChildRepository;
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
-    private final MerchantCategoryRepository merchantCategoryRepository;
 
     // 퀘스트 생성
     @Override
@@ -113,15 +111,12 @@ public class QuestServiceImpl implements QuestService {
                     .orElseThrow(() -> new QuestException(QuestErrorCode.ACCOUNT_NOT_FOUND));
 
             // 6. Transaction 생성
-            MerchantCategory category = merchantCategoryRepository.findById(20L)
-                .orElseThrow(() -> new QuestException(QuestErrorCode.CATEGORY_NOT_FOUND));
-
             Transaction transaction = Transaction.builder()
                     .account(childAccount)
                     .merchantName("퀘스트(" + quest.getTitle() + ")")
                     .amount(quest.getReward())
                     .timestamp(LocalDateTime.now())
-                    .merchantCategory(category)
+                    .categoryId(20L)
                     .build();
 
             transactionRepository.save(transaction);
