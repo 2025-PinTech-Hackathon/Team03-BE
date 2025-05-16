@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface TransactionRequestRepository extends JpaRepository<TransactionRequest, Long> {
@@ -21,4 +22,5 @@ public interface TransactionRequestRepository extends JpaRepository<TransactionR
 
     Optional<TransactionRequest> findTopByUserIdAndAmountAndMerchantNameAndStatusOrderByCreatedAtDesc(
             Long userId, int amount, String merchantName, Status status);
+    Optional<TransactionRequest> findByUserIdAndTimestamp(Long userId, LocalDateTime timestamp);
 }

@@ -3,6 +3,7 @@ package com.example.fintech.domain.trasactionRequest.controller;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import com.example.fintech.domain.trasactionRequest.Converter.TransactionRequestConverter;
+import com.example.fintech.domain.trasactionRequest.dto.TransactionApproveRequestDTO;
 import com.example.fintech.domain.trasactionRequest.dto.TransactionReqRequestDTO;
 import com.example.fintech.domain.trasactionRequest.dto.TransactionReqResponseDTO;
 import com.example.fintech.domain.trasactionRequest.entity.TransactionRequest;
@@ -38,5 +39,16 @@ public class TransactionRequestController {
                 .forEach(client -> client.sendEvent("ask-approval", responseDTO));
 
         return ApiResponse.onSuccess(null);
+    }
+
+    @PatchMapping("/approve")
+    public ApiResponse<Void> approveTransaction (
+            @RequestHeader("Authorization") String token,
+            @RequestBody TransactionApproveRequestDTO dto
+            ){
+        transactionRequestService.approveTransaction(token, dto);
+        return ApiResponse.onSuccess(null);
+
+
     }
 }
