@@ -26,7 +26,7 @@ public class AllowanceSchedule extends BaseEntity {
     private int amount;
 
     @Column(nullable = false)
-    private LocalDate startAllowance;
+    private int dayOfMonth;
 
     @ManyToOne
     @JoinColumn(name = "from_account_id")

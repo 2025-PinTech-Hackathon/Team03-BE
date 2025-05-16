@@ -26,7 +26,7 @@ public class Account extends BaseEntity {
     private String accountName;
 
     @Column(nullable = false)
-    private int bankCode;
+    private String bankCode;
 
     @Column(nullable = false)
     private String bankName;
