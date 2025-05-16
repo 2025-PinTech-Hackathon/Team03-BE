@@ -11,6 +11,7 @@ import com.example.fintech.domain.user.repository.UserRepository;
 import com.example.fintech.global.security.jwt.CustomJwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import java.time.format.DateTimeFormatter;
 
 @Component
 @RequiredArgsConstructor
@@ -34,12 +35,13 @@ public class TransactionRequestConverter {
     }
 
     public TransactionReqResponseDTO toResponseDTO(TransactionRequest entity) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         return TransactionReqResponseDTO.builder()
                 .reason(entity.getReason())
                 .merchantName(entity.getMerchantName())
                 .amount(entity.getAmount())
-                .timestamp(entity.getTimestamp())
+                .timestamp(entity.getTimestamp().format(formatter))
                 .build();
 //        TransactionReqResponseDTO dto = new TransactionReqResponseDTO();
 //        dto.setReason(entity.getReason());

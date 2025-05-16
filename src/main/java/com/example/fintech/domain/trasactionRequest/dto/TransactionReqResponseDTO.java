@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Setter
@@ -13,6 +14,6 @@ public class TransactionReqResponseDTO {
     private String reason;
     private String merchantName;
     private int amount;
-    private LocalDateTime timestamp;
+    private LocalDate timestamp;
 
 }
