@@ -15,4 +15,6 @@ public class MonthlyReportResponseDTO {
     private int food;
     private int culture;
     private int etc;
+
+    private List<HistoryResponse.TransactionDTO> spending;
 }

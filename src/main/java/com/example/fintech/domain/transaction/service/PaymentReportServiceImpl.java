@@ -5,6 +5,7 @@ import com.example.fintech.domain.home.dto.request.AiTransactionDTO;
 import com.example.fintech.domain.home.exception.HomeErrorCode;
 import com.example.fintech.domain.home.exception.HomeException;
 import com.example.fintech.domain.home.dto.request.AiRequestDTO;
+import com.example.fintech.domain.transaction.dto.response.HistoryResponse;
 import com.example.fintech.domain.transaction.entity.Transaction;
 import com.example.fintech.domain.transaction.dto.request.MonthlyReportRequestDTO;
 import com.example.fintech.domain.transaction.dto.response.MonthlyReportResponseDTO;
@@ -35,6 +36,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final RestTemplate restTemplate;
+    private final HistoryService historyService;
 
     @Value("${ai.server-url}")
     private String aiBaseUrl;
@@ -97,19 +99,16 @@ public class PaymentReportServiceImpl implements PaymentReportService {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, httpRequest, Map.class);
             Map<String, Object> body = response.getBody();
 
+            // 이용내역 호출
+            HistoryResponse.HistoryResponseDTO result = historyService.getTransHistory(request, token);
+
             return MonthlyReportResponseDTO.builder()
                     .summary((String) body.get("summary"))
                     .shopping((Integer) body.get("shopping"))
                     .food((Integer) body.get("food"))
                     .culture((Integer) body.get("culture"))
                     .etc((Integer) body.get("etc"))
-                    .spending(transactions.stream()
-                            .map(tx -> MonthlySpendingDTO.builder()
-                                    .date(tx.getTimestamp().toLocalDate().toString())
-                                    .merchant(tx.getMerchantName())
-                                    .amount(tx.getAmount())
-                                    .build())
-                            .collect(Collectors.toList()))
+                    .spending(result.getHistory())
                     .build();
         } catch (Exception e) {
             throw new HomeException(HomeErrorCode.AI_REQUEST_FAIL);
