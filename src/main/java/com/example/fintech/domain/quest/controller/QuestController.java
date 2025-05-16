@@ -46,4 +46,14 @@ public class QuestController {
         questService.deleteQuest(questId, token);
         return ApiResponse.onSuccess(null);
     }
+
+    // 퀘스트 종료
+    @PatchMapping("/{questId}/end")
+    public ApiResponse<QuestResponseDTO> endQuest(
+            @PathVariable Long questId,
+            @RequestHeader("Authorization") String token
+    ) {
+        questService.endQuest(questId, token);
+        return ApiResponse.onSuccess(null);
+    }
 }

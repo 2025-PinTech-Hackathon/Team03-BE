@@ -5,6 +5,7 @@ import com.example.fintech.domain.quest.converter.QuestConverter;
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
 import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
 import com.example.fintech.domain.quest.entity.Quest;
+import com.example.fintech.domain.quest.entity.Status;
 import com.example.fintech.domain.quest.exception.QuestErrorCode;
 import com.example.fintech.domain.quest.exception.QuestException;
 import com.example.fintech.domain.quest.repository.QuestRepository;
@@ -58,5 +59,18 @@ public class QuestServiceImpl implements QuestService {
         questRepository.delete(quest);
     }
 
+    @Override
+    public QuestResponseDTO endQuest(Long questId, String token) {
+        Long userId = CustomJwtUtil.getUserId(token);
+
+        Quest quest = questRepository.findById(questId)
+                .orElseThrow(() -> new QuestException(QuestErrorCode.QUEST_NOT_FOUND));
+
+
+        quest.setStatus(Status.END);
+        questRepository.save(quest);
+
+        return questConverter.toResponse(quest);
+    }
 
 }
