@@ -31,6 +31,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     );
 
     @Query("SELECT t FROM Transaction t " +
+            "WHERE t.account.id IN :accountId " +
+            "AND t.amount < 0 " +
+            "AND t.timestamp BETWEEN :start AND :end")
+    List<Transaction> findMonthlyExpenses(@Param("accountIds") Long accountId,
+                                          @Param("start") LocalDateTime start,
+                                          @Param("end") LocalDateTime end);
+
+    @Query("SELECT t FROM Transaction t " +
             "WHERE t.account.id = :accountId " +
             "AND t.timestamp BETWEEN :startDate AND :endDate " +
             "ORDER BY t.timestamp DESC")

@@ -1,7 +1,9 @@
 package com.example.fintech.domain.transaction.controller;
 
+import com.example.fintech.domain.transaction.dto.request.MonthlyReportRequestDTO;
 import com.example.fintech.domain.transaction.dto.request.TransactionRequestDTO;
-import com.example.fintech.domain.transaction.dto.response.TransactionResponse;
+import com.example.fintech.domain.transaction.dto.response.MonthlyReportResponseDTO;
+import com.example.fintech.domain.transaction.service.PaymentReportService;
 import com.example.fintech.domain.transaction.service.TransactionService;
 import com.example.fintech.global.ApiResponse;
 import jakarta.validation.Valid;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final PaymentReportService paymentReportService;
 
     // 결제 시도
     @PostMapping
@@ -25,11 +28,11 @@ public class TransactionController {
 
     // 소비 내역 조회
     @PostMapping("/report")
-    public BaseResponse<MonthlyReportResponseDTO> getMonthlyReport(
+    public ApiResponse<MonthlyReportResponseDTO> getMonthlyReport(
             @RequestHeader("Authorization") String token,
             @RequestBody MonthlyReportRequestDTO request
     ) {
-        MonthlyReportResponseDTO result = reportService.generateMonthlyReport(token, request);
-        return BaseResponse.success(result);
+        MonthlyReportResponseDTO result = paymentReportService.generateMonthlyReport(token, request);
+        return ApiResponse.onSuccess(result);
     }
 }
