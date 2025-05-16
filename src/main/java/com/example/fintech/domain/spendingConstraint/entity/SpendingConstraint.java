@@ -1,5 +1,6 @@
 package com.example.fintech.domain.spendingConstraint.entity;
 
+import com.example.fintech.domain.spendingConstraint.converter.StringListJsonConverter;
 import com.example.fintech.domain.trasactionRequest.entity.Status;
 import com.example.fintech.domain.user.entity.User;
 import com.example.fintech.global.entity.BaseEntity;
@@ -8,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table
@@ -24,14 +27,17 @@ public class SpendingConstraint extends BaseEntity {
 
     private String dailyLimit;
 
-    @Column(columnDefinition = "json")
-    private String category;
+    @Convert(converter = StringListJsonConverter.class)
+    @Column(name = "category", columnDefinition = "json")
+    private List<String> category;
 
-    @Column(columnDefinition = "json")
-    private String timeLimit;
+    @Convert(converter = StringListJsonConverter.class)
+    @Column(name = "time_limit", columnDefinition = "json")
+    private List<String> timeLimit;
 
-    @Column(columnDefinition = "json")
-    private String location;
+    @Convert(converter = StringListJsonConverter.class)
+    @Column(name = "location", columnDefinition = "json")
+    private List<String> location;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

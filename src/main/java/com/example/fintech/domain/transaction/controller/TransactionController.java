@@ -9,14 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/children")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class TransactionController {
 
     private final TransactionService transactionService;
 
     // 결제 시도
-    @PostMapping("/payments/attempt")
+    @PostMapping
     public ApiResponse<String> payAttempt(@Valid @RequestBody TransactionRequestDTO request){
 
         transactionService.creatTransaction(request);

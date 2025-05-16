@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,15 +50,11 @@ public class TransactionServiceImpl implements TransactionService{
                 .map(MerchantCategory::getId)
                 .orElse(null);
 
-
-
-        // constraint 검사 -> 통과
+        // constraint 검사
+        checkConstraint(request);
         // transaction request 검사 -> 통과
 
-        // 결제가능
-        // converter 호출
-
-        // repository 호출해서 저장
+        // 결제 성공
         Transaction transaction = transactionConverter.toEntity(request, account, categoryId);
         transactionRepository.save(transaction);
 
@@ -79,7 +78,21 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public boolean checkTimeLimit(Long userId, LocalDateTime timestamp) {
-        return false;
+        Optional<SpendingConstraint> optionalConstraint = constraintRepository.findByUserId(userId);
+        if (optionalConstraint.isEmpty()) return true; //제헌 없음
+
+        List<String> timeLimit = optionalConstraint.get().getTimeLimit();
+        if (timeLimit == null || timeLimit.size() != 2) return true;
+
+        LocalTime start = LocalTime.parse(timeLimit.get(0)); // ex: "09:00"
+        LocalTime end = LocalTime.parse(timeLimit.get(1));   // ex: "20:00"
+        LocalTime now = timestamp.toLocalTime();             // ex: 15:30
+
+        if (now.isBefore(start) || now.isAfter(end)) {
+            throw new TransactionException(TransactionErrorCode.TIME_LIMIT);
+        }
+
+        return true;
     }
 
     @Override
