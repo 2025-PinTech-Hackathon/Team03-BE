@@ -110,9 +110,28 @@ public class TransactionServiceImpl implements TransactionService{
         return false;
     }
 
+    // 카테고리 검증
     @Override
     public boolean checkCategoryLimit(Long userId, int mccCode) {
-        return false;
+        Optional<SpendingConstraint> optionalConstraint = constraintRepository.findByUserId(userId);
+        if (optionalConstraint.isEmpty()) return true;
+
+        List<String> blockedCategories = optionalConstraint.get().getCategory();
+
+        if (blockedCategories == null || blockedCategories.isEmpty()) return true; // 제한 없음
+
+        // 제한된 업종 이름에 해당하는 merchantCategory 코드 리스트 조회
+        List<Integer> blockedMccCodes = categoryRepository.findAllByNameIn(blockedCategories)
+                .stream()
+                .map(MerchantCategory::getCode)
+                .toList();
+
+        // 요청 mccCode가 제한된 코드에 있으면 예외 발생
+        if (blockedMccCodes.contains(mccCode)) {
+            throw new TransactionException(TransactionErrorCode.CATEGORY_LIMIT);
+        }
+
+        return true;
     }
 
     // transaction request 검증
