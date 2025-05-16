@@ -1,5 +1,6 @@
 package com.example.fintech.domain.quest.service;
 
+import com.example.fintech.domain.parentChild.repository.ParentChildRepository;
 import com.example.fintech.domain.quest.converter.QuestConverter;
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
 import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
@@ -23,6 +24,7 @@ public class QuestServiceImpl implements QuestService {
     private final QuestConverter questConverter;
     private final CustomJwtUtil CustomJwtUtil;
     private final UserRepository userRepository;
+    private final ParentChildRepository parentChildRepository;
 
     @Override
     public QuestResponseDTO createQuest(String token, QuestRequestDTO request) {
@@ -35,10 +37,15 @@ public class QuestServiceImpl implements QuestService {
             throw new QuestException(QuestErrorCode.INVALID_DATE_FORMAT);
         }
 
+        Long childId = parentChildRepository.findByParentId(userId)
+                .map(parentChild -> parentChild.getChild().getId())
+                .orElseThrow(() -> new QuestException(QuestErrorCode.CHILD_NOT_FOUND));
+
+
         Quest quest = questConverter.toEntity(request, user);
         questRepository.save(quest);
 
-        return questConverter.toResponse(quest);
+        return questConverter.toResponse(quest, childId);
     }
 
     @Override

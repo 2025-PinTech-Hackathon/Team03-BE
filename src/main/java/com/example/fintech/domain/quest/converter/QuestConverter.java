@@ -25,10 +25,12 @@ public class QuestConverter {
                 .build();
     }
 
-    public QuestResponseDTO toResponse(Quest quest) {
+    public QuestResponseDTO toResponse(Quest quest, Long childId) {
         return QuestResponseDTO.builder()
                 .questId(Long.valueOf(String.valueOf(quest.getId())))
                 .title(quest.getTitle())
+                .childId(childId)
+                .reward(quest.getReward())
                 .build();
     }
 }

@@ -4,6 +4,7 @@ import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
 import com.example.fintech.domain.quest.service.QuestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
 import com.example.fintech.global.ApiResponse;
@@ -14,7 +15,7 @@ import com.example.fintech.global.ApiResponse;
 public class QuestController {
 
     private final QuestService questService;
-
+    private final SimpMessagingTemplate messagingTemplate;
     // 퀘스트 생성
     @PostMapping("/create")
     public ApiResponse<QuestResponseDTO> createQuest(
@@ -22,6 +23,17 @@ public class QuestController {
             @Valid @RequestBody QuestRequestDTO request
     ) {
         QuestResponseDTO response = questService.createQuest(authHeader, request);
+
+
+
+        messagingTemplate.convertAndSend(
+                "/topic/child/" + response.getChildId(),
+                response
+        );
+
+        System.out.println("[WebSocket] 메시지 전송 경로: /topic/child/" + response.getChildId());
+        System.out.println("[WebSocket] 메시지 내용: " + response); // toString 확인
+
         return ApiResponse.onSuccess(response);
     }
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 연결 확인</title>
+</head>
+<body>
+<h2>🔌 WebSocket 연결 상태: <span id="status">연결 안 됨</span></h2>
+<ul id="messages"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    const socket = new SockJS("/ws");
+    const stomp = Stomp.over(socket);
+
+    const childId = "2"; // 실제 자녀 ID로 바꾸세요
+
+    stomp.connect({}, () => {
+        document.getElementById("status").innerText = "WebSocket 연결 성공!";
+
+        // 퀘스트 메시지 구독
+        stomp.subscribe(`/topic/child/${childId}`, (message) => {
+            const data = JSON.parse(message.body);
+            const li = document.createElement("li");
+            li.innerText = `퀘스트 도착: ${data.title} (보상: ${data.reward}원)`;
+            document.getElementById("messages").appendChild(li);
+        });
+    }, () => {
+        document.getElementById("status").innerText = "연결 실패";
+    });
+</script>
+</body>
+</html>
