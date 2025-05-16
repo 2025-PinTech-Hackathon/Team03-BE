@@ -36,8 +36,9 @@ public class QuestController {
         String childId = response.getChildId().toString(); // 혹은 childId 추출
 
         // 🧩 소켓으로 퀘스트 push
-        socketIOServer.getRoomOperations(childId)
-                .sendEvent("quest", response);
+        socketIOServer.getRoomOperations(childId).getClients().stream()
+                .filter(client -> "CHILD".equals(client.get("role")))
+                .forEach(client -> client.sendEvent("quest", response));
 
 
         return ApiResponse.onSuccess(response);
