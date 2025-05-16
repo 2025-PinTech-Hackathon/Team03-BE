@@ -2,7 +2,6 @@ package com.example.fintech.domain.quest.service;
 
 import com.example.fintech.domain.account.entity.Account;
 import com.example.fintech.domain.account.repository.AccountRepository;
-import com.example.fintech.domain.merchantCategory.repository.MerchantCategoryRepository;
 import com.example.fintech.domain.parentChild.repository.ParentChildRepository;
 import com.example.fintech.domain.quest.converter.QuestConverter;
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
@@ -71,14 +70,13 @@ public class QuestServiceImpl implements QuestService {
 
     // 퀘스트 종료
     @Override
-    public QuestResponseDTO endQuest(Long questId, String token) {
+    public void endQuest(Long questId, String token) {
         Quest quest = questRepository.findById(questId)
                 .orElseThrow(() -> new QuestException(QuestErrorCode.QUEST_NOT_FOUND));
 
         quest.setStatus(Status.END);
         questRepository.save(quest);
 
-        return questConverter.toResponse(quest);
     }
 
     // 퀘스트 성공
