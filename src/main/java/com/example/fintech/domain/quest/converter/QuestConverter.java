@@ -2,6 +2,7 @@ package com.example.fintech.domain.quest.converter;
 
 import com.example.fintech.domain.quest.dto.request.QuestRequestDTO;
 import com.example.fintech.domain.quest.dto.response.QuestResponseDTO;
+import com.example.fintech.domain.quest.entity.Category;
 import com.example.fintech.domain.quest.entity.Quest;
 import com.example.fintech.domain.user.entity.User;
 import com.example.fintech.domain.quest.entity.Status;
@@ -14,12 +15,12 @@ public class QuestConverter {
 
     public Quest toEntity(QuestRequestDTO dto, User user) {
         return Quest.builder()
-                .category(dto.getCategory())
+                .category(Category.valueOf(dto.getCategory().toUpperCase()))
                 .title(dto.getTitle())
                 .body(dto.getBody())
                 .reward(Integer.parseInt(dto.getReward()))
                 .deadline(LocalDate.parse(dto.getDeadline().substring(0, 10)))
-                .status(Status.Challenging)
+                .status(Status.CHALLENGING)
                 .user(user)
                 .build();
     }
