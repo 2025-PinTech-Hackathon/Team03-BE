@@ -18,9 +18,12 @@ public class TransactionResponse {
     @Builder
     @Getter
     public static class failureCategoryDTO {
-        private String mccCode;
-        private String blockedCategory;
-
+        private String reason;
+        private String merchantName;
+        private int mccCode;
+        private int amount;
+        private String timestamp;
+        private Long userId;
     }
 
     // 금액 초과 실패시 DTO

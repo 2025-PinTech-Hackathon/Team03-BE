@@ -27,5 +27,5 @@ public interface TransactionService {
     boolean checkDailyLimit(Long userId,int amount);
 
     // category limit
-    boolean checkCategoryLimit(Long userId, int mccCode);
+    boolean checkCategoryLimit(TransactionRequestDTO request);
 }

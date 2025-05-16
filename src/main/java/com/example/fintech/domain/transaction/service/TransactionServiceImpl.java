@@ -80,12 +80,13 @@ public class TransactionServiceImpl implements TransactionService{
         checkTimeLimit(userId, timestamp);
         checkAmountLimit(userId, amount);
         checkDailyLimit(userId, amount);
-        checkCategoryLimit(userId, mccCode);
+        checkCategoryLimit(request);
     }
 
     // time limit 검증
     @Override
     public boolean checkTimeLimit(Long userId, LocalDateTime timestamp) {
+
         Optional<SpendingConstraint> optionalConstraint = constraintRepository.findByUserId(userId);
         if (optionalConstraint.isEmpty()) return true; //제헌 없음
 
@@ -120,7 +121,10 @@ public class TransactionServiceImpl implements TransactionService{
 
     // 카테고리 검증
     @Override
-    public boolean checkCategoryLimit(Long userId, int mccCode) {
+    public boolean checkCategoryLimit(TransactionRequestDTO request) {
+        Long userId = request.getUserId();
+        int mccCode = request.getMccCode();
+
         Optional<SpendingConstraint> optionalConstraint = constraintRepository.findByUserId(userId);
         if (optionalConstraint.isEmpty()) return true;
 
@@ -136,7 +140,8 @@ public class TransactionServiceImpl implements TransactionService{
 
         // 요청 mccCode가 제한된 코드에 있으면 예외 발생
         if (blockedMccCodes.contains(mccCode)) {
-            throw new TransactionException(TransactionErrorCode.CATEGORY_LIMIT);
+            TransactionResponse.failureCategoryDTO failureDTO = transactionConverter.toFailureCategoryDTO(request, "업종 제한");
+            throw new TransactionException(TransactionErrorCode.CATEGORY_LIMIT,failureDTO);
         }
 
         return true;
