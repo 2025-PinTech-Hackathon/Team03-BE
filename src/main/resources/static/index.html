@@ -54,9 +54,8 @@
         socket.on("transaction-blocked", (data) => {
             console.log("❌ 거래 차단 알림 수신:", data);
 
-            // 예: alert 또는 화면에 표시
             const li = document.createElement("li");
-            li.innerText = `❌ 거래 차단: ${data.reason} (${data.amount}원 / ${data.merchantName})`;
+            li.innerText = `❌ 거래 차단: ${data.reason} (${data.amount}원 / ${data.merchantName})\n⏰ 일시: ${data.timestamp}`;
             document.getElementById("messages").appendChild(li);
         });
     }

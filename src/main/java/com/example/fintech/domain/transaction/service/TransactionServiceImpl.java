@@ -148,7 +148,7 @@ public class TransactionServiceImpl implements TransactionService{
             String childId = userId.toString();
 
             socketIOServer.getRoomOperations(childId).getClients().stream()
-                    .filter(client -> "PARENT".equals(client.get("role")))
+
                     .forEach(client -> client.sendEvent("transaction-blocked", failureDTO));
 
             throw new TransactionException(TransactionErrorCode.CATEGORY_LIMIT, failureDTO);
