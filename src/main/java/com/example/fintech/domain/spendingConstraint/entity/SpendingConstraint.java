@@ -1,6 +1,7 @@
 package com.example.fintech.domain.spendingConstraint.entity;
 
 import com.example.fintech.domain.spendingConstraint.converter.StringListJsonConverter;
+import com.example.fintech.domain.spendingConstraint.dto.request.SpendingConstraintsRequestDTO;
 import com.example.fintech.domain.trasactionRequest.entity.Status;
 import com.example.fintech.domain.user.entity.User;
 import com.example.fintech.global.entity.BaseEntity;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,9 +25,9 @@ public class SpendingConstraint extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String amountLimit;
+    private int amountLimit;
 
-    private String dailyLimit;
+    private int dailyLimit;
 
     @Convert(converter = StringListJsonConverter.class)
     @Column(name = "category", columnDefinition = "json")
@@ -42,4 +44,12 @@ public class SpendingConstraint extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void updateFrom(SpendingConstraintsRequestDTO dto) {
+        this.amountLimit = dto.getAmountLimit();
+        this.category = dto.getCategory();
+        this.dailyLimit = dto.getDailyLimit();
+        this.timeLimit = dto.getTimeRange();
+        this.updatedAt = LocalDateTime.now();
+    }
 }
