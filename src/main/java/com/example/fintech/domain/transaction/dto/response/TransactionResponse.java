@@ -3,6 +3,8 @@ package com.example.fintech.domain.transaction.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 public class TransactionResponse {
 
     // 성공시 DTO
@@ -16,7 +18,6 @@ public class TransactionResponse {
     @Builder
     @Getter
     public static class failureCategoryDTO {
-        private String reason;
         private String mccCode;
         private String blockedCategory;
 
@@ -26,7 +27,6 @@ public class TransactionResponse {
     @Builder
     @Getter
     public static class failureAmountLimitDTO {
-        private String reason;
         private int limitAmount;
         private int attemptedAmount;
 
@@ -36,9 +36,15 @@ public class TransactionResponse {
     @Builder
     @Getter
     public static class failureTimeLimitDTO {
-        private String reason;
-        private String allowedTimeRange;
+        private List<String> allowedTimeRange;
         private String attemptedTime;
+
+    }
+
+    // 일일 거래량 실패시 DTO
+    @Builder
+    @Getter
+    public static class failureDailyLimitDTO{
 
     }
 }

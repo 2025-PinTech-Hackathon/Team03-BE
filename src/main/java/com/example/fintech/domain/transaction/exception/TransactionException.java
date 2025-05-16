@@ -5,7 +5,12 @@ import com.example.fintech.global.exception.GeneralException;
 
 
 public class TransactionException extends GeneralException {
-    public TransactionException(BaseErrorCode baseErrorCode){
+    public TransactionException(BaseErrorCode baseErrorCode) {
         super(baseErrorCode);
     }
+
+    public TransactionException(BaseErrorCode baseErrorCode, Object result) {
+        super(baseErrorCode, result);
+    }
+
 }

@@ -89,7 +89,12 @@ public class TransactionServiceImpl implements TransactionService{
         LocalTime now = timestamp.toLocalTime();             // ex: 15:30
 
         if (now.isBefore(start) || now.isAfter(end)) {
-            throw new TransactionException(TransactionErrorCode.TIME_LIMIT);
+            TransactionResponse.failureTimeLimitDTO failureDTO = TransactionResponse.failureTimeLimitDTO.builder()
+                    .allowedTimeRange(timeLimit)
+                    .attemptedTime(now.toString())
+                    .build();
+
+            throw new TransactionException(TransactionErrorCode.TIME_LIMIT, failureDTO);
         }
 
         return true;
