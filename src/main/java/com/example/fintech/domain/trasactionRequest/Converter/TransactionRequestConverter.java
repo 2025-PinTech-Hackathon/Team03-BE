@@ -34,12 +34,19 @@ public class TransactionRequestConverter {
     }
 
     public TransactionReqResponseDTO toResponseDTO(TransactionRequest entity) {
-        TransactionReqResponseDTO dto = new TransactionReqResponseDTO();
-        dto.setReason(entity.getReason());
-        dto.setMerchantName(entity.getMerchantName());
-        dto.setAmount(entity.getAmount());
-        dto.setTimestamp(entity.getTimestamp());
-        return dto;
+
+        return TransactionReqResponseDTO.builder()
+                .reason(entity.getReason())
+                .merchantName(entity.getMerchantName())
+                .amount(entity.getAmount())
+                .timestamp(entity.getTimestamp())
+                .build();
+//        TransactionReqResponseDTO dto = new TransactionReqResponseDTO();
+//        dto.setReason(entity.getReason());
+//        dto.setMerchantName(entity.getMerchantName());
+//        dto.setAmount(entity.getAmount());
+//        dto.setTimestamp(entity.getTimestamp());
+//        return dto;
     }
 
 
