@@ -58,6 +58,18 @@
             li.innerText = `❌ 거래 차단: ${data.reason} (${data.amount}원 / ${data.merchantName})\n⏰ 일시: ${data.timestamp}`;
             document.getElementById("messages").appendChild(li);
         });
+
+        socket.on("ask-approval", (data) => {
+            console.log("🛑 결제 승인 요청 도착:", data);
+
+            const li = document.createElement("li");
+            li.innerText = `🧾 ${data.merchantName}에서 ${data.amount}원 결제 요청`;
+            document.getElementById("messages").appendChild(li);
+        });
+
+        socket.on("ask-result", (data) => {
+            alert(`📦 결제 상태가 '${data.status}'로 변경되었습니다.`);
+        });
     }
 </script>
 </body>
