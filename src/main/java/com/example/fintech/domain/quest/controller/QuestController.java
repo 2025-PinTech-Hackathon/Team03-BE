@@ -56,4 +56,12 @@ public class QuestController {
         questService.endQuest(questId, token);
         return ApiResponse.onSuccess(null);
     }
+
+    // 퀘스트 성공
+    @PatchMapping("/{questId}/complete")
+    public ApiResponse<Void> completeQuest(@PathVariable Long questId,
+                                           @RequestHeader("Authorization") String token) {
+        questService.completeQuest(questId, token);
+        return ApiResponse.onSuccess(null);
+    }
 }
