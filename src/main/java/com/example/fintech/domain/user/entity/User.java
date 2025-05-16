@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "User")
@@ -48,4 +50,8 @@ public class User extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private User parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<User> children = new ArrayList<>();
+
 }
