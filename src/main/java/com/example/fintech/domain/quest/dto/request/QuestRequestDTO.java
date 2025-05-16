@@ -3,6 +3,9 @@ package com.example.fintech.domain.quest.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,6 +24,7 @@ public class QuestRequestDTO {
     private String reward;
 
     @NotNull(message = "deadline is required")
-    private String deadline;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime deadline;
 }
 
