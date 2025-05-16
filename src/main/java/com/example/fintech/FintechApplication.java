@@ -22,8 +22,10 @@ public class FintechApplication {
 		System.setProperty("DB_PORT", dotenv.get("DB_PORT"));
 		System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
 		System.setProperty("CORS_ALLOWED_ORIGIN", dotenv.get("CORS_ALLOWED_ORIGIN"));
+		System.setProperty("AI_SERVER_URL", dotenv.get("AI_SERVER_URL"));
+
 
 		SpringApplication.run(FintechApplication.class, args);
-	}
 
+	}
 }
