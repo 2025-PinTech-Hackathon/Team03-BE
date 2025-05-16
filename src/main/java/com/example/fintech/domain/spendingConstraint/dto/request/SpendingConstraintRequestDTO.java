@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SpendingConstraintsRequestDTO {
+public class SpendingConstraintRequestDTO {
 
     @NotNull(message = "category is required")
     private List<String> category;

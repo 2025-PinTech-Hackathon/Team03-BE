@@ -3,8 +3,11 @@ package com.example.fintech.domain.spendingConstraint.service;
 import com.example.fintech.domain.quest.exception.QuestErrorCode;
 import com.example.fintech.domain.quest.exception.QuestException;
 import com.example.fintech.domain.spendingConstraint.converter.SpendingConstraintConverter;
-import com.example.fintech.domain.spendingConstraint.dto.request.SpendingConstraintsRequestDTO;
+import com.example.fintech.domain.spendingConstraint.dto.request.SpendingConstraintRequestDTO;
+import com.example.fintech.domain.spendingConstraint.dto.response.SpendingConstraintResponseDTO;
 import com.example.fintech.domain.spendingConstraint.entity.SpendingConstraint;
+import com.example.fintech.domain.spendingConstraint.exception.SpendingConstraintErrorCode;
+import com.example.fintech.domain.spendingConstraint.exception.SpendingConstraintException;
 import com.example.fintech.domain.spendingConstraint.repository.SpendingConstraintRepository;
 import com.example.fintech.domain.user.entity.User;
 import com.example.fintech.domain.user.repository.UserRepository;
@@ -25,7 +28,7 @@ public class SpendingConstraintServiceImpl implements SpendingConstraintService{
     private final SpendingConstraintConverter spendingConstraintConverter;
 
     @Override
-    public void putSpendingLimits(String authHeader, SpendingConstraintsRequestDTO request) {
+    public void putSpendingLimits(String authHeader, SpendingConstraintRequestDTO request) {
 
         Long userId = CustomJwtUtil.getUserId(authHeader);
 
@@ -52,7 +55,27 @@ public class SpendingConstraintServiceImpl implements SpendingConstraintService{
 
         }
 
-
-
     }
+
+    @Override
+    public SpendingConstraintResponseDTO getSpendingLimits(String authHeader) {
+        Long userId = CustomJwtUtil.getUserId(authHeader);
+
+        User parent = userRepository.findById(userId)
+                .orElseThrow(() -> new SpendingConstraintException(SpendingConstraintErrorCode.USER_NOT_FOUND));
+
+        List<User> children = parent.getChildren();
+        if (children.isEmpty()) {
+            throw new SpendingConstraintException(SpendingConstraintErrorCode.CHILD_NOT_FOUND);
+        }
+
+        User child = children.get(0);
+        Long childId = child.getId();
+
+        SpendingConstraint constraint = constraintRepository.findByUserId(childId)
+                .orElseThrow(() -> new SpendingConstraintException(SpendingConstraintErrorCode.CONSTRAINT_NOT_FOUND));
+
+        return spendingConstraintConverter.toResponseDTO(constraint);
+    }
+
 }

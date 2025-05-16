@@ -1,8 +1,7 @@
 package com.example.fintech.domain.spendingConstraint.entity;
 
 import com.example.fintech.domain.spendingConstraint.converter.StringListJsonConverter;
-import com.example.fintech.domain.spendingConstraint.dto.request.SpendingConstraintsRequestDTO;
-import com.example.fintech.domain.trasactionRequest.entity.Status;
+import com.example.fintech.domain.spendingConstraint.dto.request.SpendingConstraintRequestDTO;
 import com.example.fintech.domain.user.entity.User;
 import com.example.fintech.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -45,7 +44,7 @@ public class SpendingConstraint extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void updateFrom(SpendingConstraintsRequestDTO dto) {
+    public void updateFrom(SpendingConstraintRequestDTO dto) {
         this.amountLimit = dto.getAmountLimit();
         this.category = dto.getCategory();
         this.dailyLimit = dto.getDailyLimit();

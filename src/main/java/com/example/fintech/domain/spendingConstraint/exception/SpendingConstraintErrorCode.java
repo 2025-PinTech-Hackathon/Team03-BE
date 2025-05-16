@@ -10,9 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum SpendingConstraintErrorCode implements BaseErrorCode{
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "LIMIT404_1", "존재하지 않는 사용자입니다."),
-    MISSING_REQUIRED_VALUE(HttpStatus.BAD_REQUEST, "LIMIT400_1", "필수 입력값이 누락되었습니다."),
-    LIMIT_NOT_FOUND(HttpStatus.NOT_FOUND, "LIMIT404_1", "해당 퀘스트를 찾을 수 없습니다."),
-    INVALID_ROLE(HttpStatus.FORBIDDEN, "LIMIT403_1", "권한이 올바르지 않습니다."),
+    CHILD_NOT_FOUND(HttpStatus.NOT_FOUND, "LIMIT404_2", "자녀 정보를 찾을 수 없습니다."),
+    CONSTRAINT_NOT_FOUND(HttpStatus.NOT_FOUND,"LIMIT404_3","등록된 제한 정보가 없습니다"),
     TOKEN_MISSING(HttpStatus.UNAUTHORIZED, "LIMIT401_1", "인증 정보가 없습니다. 토큰을 포함해주세요.");
 
     private final HttpStatus httpStatus;
