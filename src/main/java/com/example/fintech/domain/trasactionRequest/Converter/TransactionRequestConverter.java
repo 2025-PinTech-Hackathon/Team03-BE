@@ -35,7 +35,7 @@ public class TransactionRequestConverter {
     }
 
     public TransactionReqResponseDTO toResponseDTO(TransactionRequest entity) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         return TransactionReqResponseDTO.builder()
                 .reason(entity.getReason())
