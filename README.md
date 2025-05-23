@@ -1,7 +1,7 @@
 
 <div align="center">
    
-# 아이와 부모가 함께 만드는 똑똑한 금융 습관, 용돈의 숲 🌳 - FRONTEND
+   # 아이와 부모가 함께 만드는 똑똑한 금융 습관, 용돈의 숲 🌳 - BACKEND
 
    [<img src="https://img.shields.io/badge/프로젝트 기간-2025.05.16~2025.05.17-fab2ac?style=flat&logo=&logoColor=white" />]()
 
